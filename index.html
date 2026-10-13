@@ -101,51 +101,86 @@
   .notif-4 { border-color: #ff9ff3; }
   .notif-5 { border-color: #1dd1a1; }
   
-  .verse-screen {
+  /* OVERLAY DE PANTALLA COMPLETA */
+  .fullscreen-overlay {
     display: none;
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    border-radius: 15px;
-    padding: 30px 20px;
-    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #f093fb 100%);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
     animation: fadeIn 1s ease;
-    margin-top: 15px;
+    overflow: hidden;
   }
-  .verse-screen.show {
-    display: block;
+  .fullscreen-overlay.show {
+    display: flex;
   }
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
-  .verse-screen .emoji {
-    font-size: 2.5em;
-    margin-bottom: 15px;
+  .verse-container {
+    text-align: center;
+    max-width: 600px;
+    z-index: 101;
+    position: relative;
+    animation: slideUp 1s ease;
   }
-  .verse-screen .verse {
+  @keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .verse-container .emoji {
+    font-size: 4em;
+    margin-bottom: 30px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .verse-container .verse {
     font-family: 'Georgia', serif;
-    font-size: 1.1em;
+    font-size: 2em;
     color: #5d4037;
-    line-height: 1.6;
+    line-height: 1.5;
     font-style: italic;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
   }
-  .verse-screen .reference {
-    font-size: 0.9em;
+  .verse-container .reference {
+    font-size: 1.2em;
     color: #8d6e63;
     font-weight: bold;
+    background: rgba(255,255,255,0.6);
+    padding: 10px 25px;
+    border-radius: 25px;
+    display: inline-block;
   }
   
+  /* FLORES - AHORA CON Z-INDEX MAYOR */
   .flower {
     position: fixed;
     top: -50px;
     font-size: 2em;
     animation: fall linear forwards;
-    z-index: 1;
+    z-index: 102;
     pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
   }
   @keyframes fall {
-    to { 
-      transform: translateY(110vh) rotate(360deg); 
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0.8;
     }
   }
 
@@ -169,11 +204,11 @@
     .notif-body {
       font-size: 0.85em;
     }
-    .verse-screen {
-      padding: 20px 15px;
+    .verse-container .verse {
+      font-size: 1.5em;
     }
-    .verse-screen .verse {
-      font-size: 1em;
+    .verse-container .emoji {
+      font-size: 3em;
     }
   }
 </style>
@@ -211,7 +246,7 @@
 
     <div class="notification notif-3" id="n3">
       <div class="notif-header">
-        <span class="notif-icon">📊</span>
+        <span class="notif-icon"></span>
         <span class="notif-title">ESTADÍSTICA DEL DÍA</span>
         <span class="notif-time">hace 2 min</span>
       </div>
@@ -241,14 +276,17 @@
         Tienes un mensaje sin leer de alguien que piensa que eres genial. Toca para ver.
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="verse-screen" id="verseScreen">
-      <div class="emoji">🌸</div>
-      <div class="verse">
-        "Toda tú eres hermosa, amiga mía, y en ti no hay defecto."
-      </div>
-      <div class="reference">— Cantares 4:7</div>
+<!-- OVERLAY DE PANTALLA COMPLETA -->
+<div class="fullscreen-overlay" id="fullscreenOverlay">
+  <div class="verse-container">
+    <div class="emoji">🌸</div>
+    <div class="verse">
+      "Toda tú eres hermosa, amiga mía, y en ti no hay defecto."
     </div>
+    <div class="reference">— Cantares 4:7</div>
   </div>
 </div>
 
@@ -267,16 +305,15 @@
   setTimeout(showNext, 1000);
 
   function showVerse() {
-    document.getElementById('n5').style.display = 'none';
-    document.getElementById('verseScreen').classList.add('show');
+    document.getElementById('fullscreenOverlay').classList.add('show');
     startFlowerShower();
   }
 
   function startFlowerShower() {
-    const flowers = ['🌸', '🌹', '🌷', '🌻', '🌺', '💐', '🌼'];
+    const flowers = ['🌸', '', '🌷', '🌻', '🌺', '💐', '', '✨', '💖'];
     let count = 0;
     const interval = setInterval(() => {
-      if (count >= 50) {
+      if (count >= 100) {
         clearInterval(interval);
         return;
       }
@@ -284,12 +321,12 @@
       flower.classList.add('flower');
       flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
       flower.style.left = Math.random() * 100 + 'vw';
-      flower.style.animationDuration = (Math.random() * 3 + 3) + 's';
-      flower.style.fontSize = (Math.random() * 1.5 + 1.5) + 'em';
+      flower.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      flower.style.fontSize = (Math.random() * 2 + 1.5) + 'em';
       document.body.appendChild(flower);
-      setTimeout(() => flower.remove(), 6000);
+      setTimeout(() => flower.remove(), 5000);
       count++;
-    }, 200);
+    }, 100);
   }
 </script>
 </body>

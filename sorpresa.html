@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notificaciones</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    overflow-x: hidden;
+  }
+  .phone {
+    background: #000;
+    border-radius: 30px;
+    padding: 15px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 10;
+  }
+  .screen {
+    background: #1a1a1a;
+    border-radius: 20px;
+    padding: 20px 15px;
+    min-height: 500px;
+  }
+  .header {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 1.3em;
+    margin-bottom: 5px;
+  }
+  .header p {
+    color: #888;
+    font-size: 0.85em;
+  }
+  .notification {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    display: none;
+    animation: slideIn 0.5s ease;
+    border-left: 4px solid;
+  }
+  .notification.show {
+    display: block;
+  }
+  .notification.clickable {
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .notification.clickable:hover {
+    transform: scale(1.02);
+    background: #333;
+  }
+  .notification.clickable:active {
+    transform: scale(0.98);
+  }
+  @keyframes slideIn {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .notif-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .notif-icon {
+    font-size: 1.3em;
+    margin-right: 8px;
+  }
+  .notif-title {
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.85em;
+  }
+  .notif-time {
+    color: #666;
+    font-size: 0.7em;
+    margin-left: auto;
+  }
+  .notif-body {
+    color: #ccc;
+    font-size: 0.9em;
+    line-height: 1.4;
+  }
+  .notif-1 { border-color: #ff6b6b; }
+  .notif-2 { border-color: #feca57; }
+  .notif-3 { border-color: #48dbfb; }
+  .notif-4 { border-color: #ff9ff3; }
+  .notif-5 { border-color: #1dd1a1; }
+  
+  .verse-screen {
+    display: none;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    border-radius: 15px;
+    padding: 30px 20px;
+    text-align: center;
+    animation: fadeIn 1s ease;
+    margin-top: 15px;
+  }
+  .verse-screen.show {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .verse-screen .emoji {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+  }
+  .verse-screen .verse {
+    font-family: 'Georgia', serif;
+    font-size: 1.1em;
+    color: #5d4037;
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 15px;
+  }
+  .verse-screen .reference {
+    font-size: 0.9em;
+    color: #8d6e63;
+    font-weight: bold;
+  }
+  
+  .flower {
+    position: fixed;
+    top: -50px;
+    font-size: 2em;
+    animation: fall linear forwards;
+    z-index: 1;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { 
+      transform: translateY(110vh) rotate(360deg); 
+    }
+  }
+
+  @media (max-width: 380px) {
+    .phone {
+      border-radius: 20px;
+      padding: 10px;
+    }
+    .screen {
+      border-radius: 15px;
+      padding: 15px 10px;
+      min-height: 450px;
+    }
+    .header h1 {
+      font-size: 1.1em;
+    }
+    .notification {
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .notif-body {
+      font-size: 0.85em;
+    }
+    .verse-screen {
+      padding: 20px 15px;
+    }
+    .verse-screen .verse {
+      font-size: 1em;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen">
+    <div class="header">
+      <h1>📱 Notificaciones</h1>
+      <p>Hoy, 13 de octubre</p>
+    </div>
+
+    <div class="notification notif-1" id="n1">
+      <div class="notif-header">
+        <span class="notif-icon">🚨</span>
+        <span class="notif-title">ALERTA MUNDIAL</span>
+        <span class="notif-time">ahora</span>
+      </div>
+      <div class="notif-body">
+        Científicos confirman: Tu sonrisa es oficialmente la más contagiosa del hemisferio occidental. Se recomienda usar con responsabilidad.
+      </div>
+    </div>
+
+    <div class="notification notif-2" id="n2">
+      <div class="notif-header">
+        <span class="notif-icon">⚠️</span>
+        <span class="notif-title">ADVERTENCIA</span>
+        <span class="notif-time">hace 1 min</span>
+      </div>
+      <div class="notif-body">
+        Alguien (que no diré nombre) se acordó de ti hace exactamente 3 minutos. Esto puede causar sonrisas involuntarias.
+      </div>
+    </div>
+
+    <div class="notification notif-3" id="n3">
+      <div class="notif-header">
+        <span class="notif-icon">📊</span>
+        <span class="notif-title">ESTADÍSTICA DEL DÍA</span>
+        <span class="notif-time">hace 2 min</span>
+      </div>
+      <div class="notif-body">
+        Niveles de "persona genial": 847% por encima del promedio. No se detectaron anomalías. Eres tú.
+      </div>
+    </div>
+
+    <div class="notification notif-4" id="n4">
+      <div class="notif-header">
+        <span class="notif-icon">💭</span>
+        <span class="notif-title">RECORDATORIO</span>
+        <span class="notif-time">hace 3 min</span>
+      </div>
+      <div class="notif-body">
+        Hoy es un buen día para ser increíble. Spoiler: Ya lo eres. Solo necesitábamos confirmarlo.
+      </div>
+    </div>
+
+    <div class="notification notif-5 clickable" id="n5" onclick="showVerse()">
+      <div class="notif-header">
+        <span class="notif-icon">🎁</span>
+        <span class="notif-title">MENSAJE ESPECIAL</span>
+        <span class="notif-time">hace 4 min</span>
+      </div>
+      <div class="notif-body">
+        Tienes un mensaje sin leer de alguien que piensa que eres genial. Toca para ver.
+      </div>
+    </div>
+
+    <div class="verse-screen" id="verseScreen">
+      <div class="emoji">🌸</div>
+      <div class="verse">
+        "Toda tú eres hermosa, amiga mía, y en ti no hay defecto."
+      </div>
+      <div class="reference">— Cantares 4:7</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const notifications = ['n1', 'n2', 'n3', 'n4', 'n5'];
+  let currentIndex = 0;
+
+  function showNext() {
+    if (currentIndex < notifications.length) {
+      document.getElementById(notifications[currentIndex]).classList.add('show');
+      currentIndex++;
+      setTimeout(showNext, 2000);
+    }
+  }
+
+  setTimeout(showNext, 1000);
+
+  function showVerse() {
+    document.getElementById('n5').style.display = 'none';
+    document.getElementById('verseScreen').classList.add('show');
+    startFlowerShower();
+  }
+
+  function startFlowerShower() {
+    const flowers = ['🌸', '🌹', '🌷', '🌻', '🌺', '💐', '🌼'];
+    let count = 0;
+    const interval = setInterval(() => {
+      if (count >= 50) {
+        clearInterval(interval);
+        return;
+      }
+      const flower = document.createElement('div');
+      flower.classList.add('flower');
+      flower.innerHTML = flowers[Math.floor(Math.random() * flowers.length)];
+      flower.style.left = Math.random() * 100 + 'vw';
+      flower.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      flower.style.fontSize = (Math.random() * 1.5 + 1.5) + 'em';
+      document.body.appendChild(flower);
+      setTimeout(() => flower.remove(), 6000);
+      count++;
+    }, 200);
+  }
+</script>
+</body>
+</html>
